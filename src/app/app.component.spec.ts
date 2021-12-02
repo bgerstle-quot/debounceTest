@@ -1,31 +1,44 @@
-import { TestBed } from '@angular/core/testing';
+import {
+  TestBed,
+  fakeAsync,
+  tick,
+  ComponentFixture,
+} from '@angular/core/testing';
 import { AppComponent } from './app.component';
+import {
+  Subject,
+  debounceTime,
+} from 'rxjs';
+import { By } from '@angular/platform-browser';
 
 describe('AppComponent', () => {
-  beforeEach(async () => {
-    await TestBed.configureTestingModule({
+  let fixture: ComponentFixture<AppComponent>
+  beforeEach((() => {
+    TestBed.configureTestingModule({
       declarations: [
         AppComponent
       ],
     }).compileComponents();
-  });
-
-  it('should create the app', () => {
-    const fixture = TestBed.createComponent(AppComponent);
-    const app = fixture.componentInstance;
-    expect(app).toBeTruthy();
-  });
-
-  it(`should have as title 'debounceTimeTest'`, () => {
-    const fixture = TestBed.createComponent(AppComponent);
-    const app = fixture.componentInstance;
-    expect(app.title).toEqual('debounceTimeTest');
-  });
-
-  it('should render title', () => {
-    const fixture = TestBed.createComponent(AppComponent);
+    fixture = TestBed.createComponent(AppComponent);
     fixture.detectChanges();
-    const compiled = fixture.nativeElement as HTMLElement;
-    expect(compiled.querySelector('.content span')?.textContent).toContain('debounceTimeTest app is running!');
-  });
+  }));
+
+  it('debounceTime should be affected by tick inside fakeAsync', fakeAsync(() => {
+    const subject$: Subject<void> = new Subject<void>();
+    let str = '';
+    subject$.pipe(
+      debounceTime(0),
+    ).subscribe(() => str = 'test');
+    subject$.next();
+    expect(str).toEqual('');
+    tick(1e3);
+    expect(str).toEqual('test');
+  }));
+
+  it('debounceTime should be affected by tick outside fakeAsync', fakeAsync(() => {
+    const divEl = fixture.debugElement.query(By.css('div'));
+    fixture.componentInstance.btnClick();
+    tick(1e4);
+    expect(divEl.nativeElement.innerText).toEqual('clicked');
+  }));
 });
