@@ -14,16 +14,17 @@ import {
 })
 export class AppComponent {
   title = 'debounceTimeTest';
-  subject$ = new BehaviorSubject<boolean>(false);
+  subject$ = new BehaviorSubject<boolean>(true);
   text$ = this.subject$.pipe(
     debounceTime(0),
     map(val => {
+      console.log(val);
       return val ? 'not clicked' : 'clicked'
     }),
   );
   constructor() {
   }
   btnClick() {
-    this.subject$.next(true);
+    this.subject$.next(false);
   }
 }

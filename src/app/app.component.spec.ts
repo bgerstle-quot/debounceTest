@@ -13,7 +13,7 @@ import { By } from '@angular/platform-browser';
 
 describe('AppComponent', () => {
   let fixture: ComponentFixture<AppComponent>
-  beforeEach((() => {
+  const beforeEachTest = () => {
     TestBed.configureTestingModule({
       declarations: [
         AppComponent
@@ -21,9 +21,10 @@ describe('AppComponent', () => {
     }).compileComponents();
     fixture = TestBed.createComponent(AppComponent);
     fixture.detectChanges();
-  }));
+  };
 
   it('debounceTime should be affected by tick inside fakeAsync', fakeAsync(() => {
+    beforeEachTest();
     const subject$: Subject<void> = new Subject<void>();
     let str = '';
     subject$.pipe(
@@ -36,9 +37,15 @@ describe('AppComponent', () => {
   }));
 
   it('debounceTime should be affected by tick outside fakeAsync', fakeAsync(() => {
+    beforeEachTest();
     const divEl = fixture.debugElement.query(By.css('div'));
     fixture.componentInstance.btnClick();
     tick(1e4);
+    fixture.detectChanges();
+    tick(1e4);
+    fixture.detectChanges();
+    tick(1e4);
+    fixture.detectChanges();
     expect(divEl.nativeElement.innerText).toEqual('clicked');
   }));
 });
