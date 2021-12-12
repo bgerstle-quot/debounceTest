@@ -42,10 +42,6 @@ describe('AppComponent', () => {
     fixture.componentInstance.btnClick();
     tick(1e4);
     fixture.detectChanges();
-    tick(1e4);
-    fixture.detectChanges();
-    tick(1e4);
-    fixture.detectChanges();
     expect(divEl.nativeElement.innerText).toEqual('clicked');
   }));
 });
